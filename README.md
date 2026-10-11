@@ -54,8 +54,9 @@ Requires JDK 21.
 The upstream mod is MIT (Copyright (c) 2022 tom5454); the upstream text is preserved in
 `LICENSE-UPSTREAM-MIT`.
 
-**This fork is licensed LGPL-3.0-or-later** (`LICENSE`, with `LICENSE-GPL-3.0.txt`
-incorporated). The fork adds one texture derived from `ae2:block/interface` from Applied
+**This fork is licensed LGPL-3.0-or-later**: `LICENSE` holds the LGPL-3.0 text
+verbatim, and `LICENSE-GPL-3.0.txt` holds the GPL-3.0 text that LGPL-3.0 incorporates.
+The fork adds one texture derived from `ae2:block/interface` from Applied
 Energistics 2, which is LGPL-3.0 and therefore cannot be redistributed under MIT.
 
 See `NOTICE.md` for full attribution and a change log.

@@ -13,7 +13,8 @@ The upstream mod is licensed **MIT** (Copyright (c) 2022 tom5454). The full upst
 license text is preserved in `LICENSE-UPSTREAM-MIT`.
 
 **This fork as a whole is distributed under the GNU Lesser General Public License v3.0
-or later** (`LICENSE`). See `LICENSE` for the full text.
+or later** (`LICENSE`, verbatim). `LICENSE-GPL-3.0.txt` holds the GNU General Public
+License v3.0 text that LGPL-3.0 incorporates.
 
 Why the whole fork is LGPL-3.0 and not MIT: the fork ships one texture,
 `createstockbridge:block/provider_interface`, which is a recoloured derivative of
