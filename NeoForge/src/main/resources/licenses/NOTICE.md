@@ -19,7 +19,8 @@ Why the whole fork is LGPL-3.0 and not MIT: the fork ships one texture,
 `createstockbridge:block/provider_interface`, which is a recoloured derivative of
 `ae2:block/interface` from **Applied Energistics 2**. AE2 is licensed LGPL-3.0, so that
 derived asset cannot be redistributed under MIT terms. Relicensing the whole fork to
-LGPL-3.0 is the conservative and compatible way to ship it.
+LGPL-3.0 is the conservative and compatible way to ship it. See **Assets** below for the
+full asset breakdown.
 
 `LICENSE` (LGPL-3.0) is compatible with the upstream MIT terms — MIT code may be
 combined into an LGPL work provided the MIT notice is retained, which it is, in
@@ -27,18 +28,16 @@ combined into an LGPL work provided the MIT notice is retained, which it is, in
 
 ### Assets
 
-This mod redistributes two textures that originate in **Applied Energistics 2**
-(LGPL-3.0). Copyright (c) the Applied Energistics team. Both are licensed LGPL-3.0
-with the rest of this fork:
-
 - `assets/createstockbridge/textures/block/provider_interface.png` — **added by this
-  fork.** A recoloured derivative of `ae2:block/interface`: every pixel is an exact
-  per-channel function of the corresponding AE2 pixel. This asset is the reason the
-  fork is LGPL-3.0 rather than MIT.
-- `assets/ae2/textures/guis/csb_bridge.png` — **inherited from upstream v0.2.0,
-  unchanged.** Verified byte-identical to the copy in the upstream release. It is
-  stored under the `ae2` namespace so it resolves at runtime, and is relicensed here
-  to LGPL-3.0 so the combined jar has one consistent set of terms.
+  fork.** A recoloured derivative of `ae2:block/interface` from **Applied Energistics 2**
+  (LGPL-3.0): every pixel is an exact per-channel function of the corresponding AE2 pixel.
+  Copyright (c) the Applied Energistics team. **This asset is the sole reason the fork is
+  LGPL-3.0 rather than MIT.**
+- `assets/ae2/textures/guis/csb_bridge.png` — authored by upstream at `d09c6fa`, carried
+  through unchanged and verified byte-identical to the copy in the upstream release
+  (sha1 `817963aa…`). It lives under the `ae2` namespace so it resolves at runtime.
+  Its status is unchanged from upstream; this fork simply covers it with the same terms as
+  the rest of the jar.
 
 No Create texture file is copied or redistributed. The `ae_provider` block models
 reference `create:block/*` textures **by name only**; Create is MIT for code and

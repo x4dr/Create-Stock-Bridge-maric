@@ -55,7 +55,7 @@ The upstream mod is MIT (Copyright (c) 2022 tom5454); the upstream text is prese
 `LICENSE-UPSTREAM-MIT`.
 
 **This fork is licensed LGPL-3.0-or-later** (`LICENSE`, with `LICENSE-GPL-3.0.txt`
-incorporated). The fork ships one texture derived from `ae2:block/interface` from Applied
+incorporated). The fork adds one texture derived from `ae2:block/interface` from Applied
 Energistics 2, which is LGPL-3.0 and therefore cannot be redistributed under MIT.
 
 See `NOTICE.md` for full attribution and a change log.
