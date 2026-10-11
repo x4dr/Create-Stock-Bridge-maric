@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "createstockbridge:ae_provider"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "createstockbridge:ae_bridge"
+  }
+}

@@ -50,6 +50,9 @@ repositories {
 }
 
 base {
+    // Carries the fork suffix so this jar can never collide with an upstream
+    // release of the same mod id + MC version. mod_version already ends in
+    // "-maric.N", which is what distinguishes it downstream.
     archivesName = 'createstockbridge-1.21.1'
 }
 

@@ -24,6 +24,8 @@ import com.simibubi.create.content.logistics.packagerLink.LogisticsManager;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 
+import com.tom.stockbridge.ae.AbstractAEStockBridgeBlockEntity;
+
 public class BridgeBehaviour extends LogisticallyLinkedBehaviour {
 	public String recipeAddress = "";
 
@@ -114,6 +116,10 @@ public class BridgeBehaviour extends LogisticallyLinkedBehaviour {
 			InventorySummary summaryOfLinks = new InventorySummary();
 			LogisticallyLinkedBehaviour.getAllPresent(freqId, false)
 			.forEach(link -> {
+				// AE-facing links report the ME network, not Create stock. Skip them
+				// so the bridge never sees its own network as Create inventory.
+				if (link.blockEntity instanceof AbstractAEStockBridgeBlockEntity)
+					return;
 				InventorySummary summary = link.getSummary(id);
 				if (summary != InventorySummary.EMPTY)
 					summaryOfLinks.contributingLinks++;

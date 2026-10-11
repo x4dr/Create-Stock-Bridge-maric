@@ -1,5 +1,6 @@
 {
   "values": [
-    "createstockbridge:ae_bridge"
+    "createstockbridge:ae_bridge",
+    "createstockbridge:ae_provider"
   ]
 }

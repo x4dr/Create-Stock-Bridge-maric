@@ -15,6 +15,7 @@ import com.simibubi.create.api.packager.InventoryIdentifier;
 import com.simibubi.create.content.logistics.packager.IdentifiedInventory;
 import com.simibubi.create.content.logistics.packager.PackagerBlockEntity;
 import com.simibubi.create.content.logistics.packager.PackagingRequest;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 import com.simibubi.create.content.logistics.stockTicker.PackageOrderWithCrafts;
 
 import com.tom.stockbridge.util.StockBridgeInventory;
@@ -38,7 +39,7 @@ public class AEStockBridgeBlockEntity extends AbstractAEStockBridgeBlockEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (!level.isClientSide && !inv.isInsertEmpty()) {
+		if (!level.isClientSide && !isProviderMode() && !inv.isInsertEmpty()) {
 			final IGrid grid = this.getMainNode().getGrid();
 			if (grid != null) {
 				final MEStorage networkInv = grid.getStorageService().getInventory();
@@ -65,6 +66,10 @@ public class AEStockBridgeBlockEntity extends AbstractAEStockBridgeBlockEntity {
 		if (grid == null) return null;
 		PackagerBlockEntity packager = getPackager();
 		if (packager == null)
+			return null;
+		// Let Create fall through to another AE-facing block whose packager is
+		// free, instead of failing the whole request when this one is saturated.
+		if (packager.isTooBusyFor(LogisticallyLinkedBehaviour.RequestType.RESTOCK))
 			return null;
 
 		final MEStorage networkInv = grid.getStorageService().getInventory();

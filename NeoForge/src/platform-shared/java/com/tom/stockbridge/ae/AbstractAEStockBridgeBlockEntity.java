@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import com.simibubi.create.Create;
 import com.simibubi.create.content.logistics.packager.InventorySummary;
+import com.simibubi.create.content.logistics.packagerLink.LogisticallyLinkedBehaviour;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -68,19 +69,33 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 	protected InventorySummary items;
 	protected final IActionSource actionSource;
 	private KeyCounter itemRequests = new KeyCounter();
+	/**
+	 * True when this block entity belongs to an {@link AEStockProviderBlock}.
+	 * Provider mode is unidirectional (AE to Create only): it does not register
+	 * as AE storage or a crafting provider and does not run the Create to AE
+	 * virtual-pattern path.
+	 */
+	protected final boolean providerMode;
 
 	public AbstractAEStockBridgeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
-		this.mainNode = this.createMainNode().setVisualRepresentation(AERegistration.BRIDGE_BLOCK.asItem())
+		this.providerMode = state.getBlock() instanceof AEStockProviderBlock;
+		this.mainNode = this.createMainNode().setVisualRepresentation((providerMode ? AERegistration.PROVIDER_BLOCK : AERegistration.BRIDGE_BLOCK).asItem())
 				.setInWorldNode(true).setTagName("proxy").setFlags(GridFlags.REQUIRE_CHANNEL).setIdlePowerUsage(4d);
 		this.inventory = new BridgeStorage();
 		this.craftingTracker = new MultiCraftingTracker(this, 8);
-		this.getMainNode().addService(IStorageProvider.class, this);
-		this.getMainNode().addService(ICraftingRequester.class, this);
-		this.getMainNode().addService(ICraftingProvider.class, this);
-		this.getMainNode().addService(IStorageWatcherNode.class, this);
+		if (!providerMode) {
+			this.getMainNode().addService(IStorageProvider.class, this);
+			this.getMainNode().addService(ICraftingRequester.class, this);
+			this.getMainNode().addService(ICraftingProvider.class, this);
+			this.getMainNode().addService(IStorageWatcherNode.class, this);
+		}
 		this.actionSource = new MachineSource(mainNode::getNode);
 		this.onGridConnectableSidesChanged();
+	}
+
+	public final boolean isProviderMode() {
+		return providerMode;
 	}
 
 	protected IManagedGridNode createMainNode() {
@@ -204,6 +219,8 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 	}
 
 	private void remountStorage() {
+		if (providerMode)
+			return;
 		IStorageProvider.requestUpdate(this.getMainNode());
 		ICraftingProvider.requestUpdate(this.getMainNode());
 	}
@@ -221,6 +238,8 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 	@Override
 	public void tick() {
 		super.tick();
+		if (providerMode)
+			return;
 		if (!level.isClientSide && level.getGameTime() % 20 == Math.abs(worldPosition.hashCode()) % 20) {
 			items = behaviour.getItems();
 			remountStorage();//TODO improve speed
@@ -289,7 +308,7 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 
 	@Override
 	public ItemStack getMainMenuIcon() {
-		return AERegistration.BRIDGE_BLOCK.asStack();
+		return (providerMode ? AERegistration.PROVIDER_BLOCK : AERegistration.BRIDGE_BLOCK).asStack();
 	}
 
 	@Override
@@ -301,9 +320,32 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 		MenuOpener.open(AEStockBridgeMenu.TYPE, player, MenuLocators.forBlockEntity(this));
 	}
 
+	/**
+	 * All AE-facing blocks on a Create stock frequency represent the same ME
+	 * network. Only the lowest-positioned one that has a packager reports the AE
+	 * inventory, so Create counts it once no matter how many providers (or full
+	 * bridges) are placed. The rest return EMPTY but still fulfil requests, which
+	 * lets Create fall through to a free packager.
+	 */
+	public boolean isReportingAE() {
+		if (behaviour == null || behaviour.freqId == null)
+			return true;
+		BlockPos best = null;
+		for (LogisticallyLinkedBehaviour link : LogisticallyLinkedBehaviour.getAllPresent(behaviour.freqId, false)) {
+			if (link.blockEntity instanceof AbstractAEStockBridgeBlockEntity ae && ae.getPackager() != null) {
+				BlockPos p = ae.getBlockPos();
+				if (best == null || p.compareTo(best) < 0)
+					best = p;
+			}
+		}
+		return best == null || best.equals(getBlockPos());
+	}
+
 	@Override
 	public InventorySummary fetchSummaryFromPackager() {
 		if (getPackager() == null)return InventorySummary.EMPTY;
+		if (!isReportingAE())return InventorySummary.EMPTY;
+		if (mainNode.getGrid() == null)return InventorySummary.EMPTY;
 
 		InventorySummary sum = new InventorySummary();
 
@@ -323,6 +365,8 @@ IGridConnectedBlockEntity, IPriorityHost, IStorageProvider, ICraftingProvider, I
 
 	@Override
 	public List<IPatternDetails> getAvailablePatterns() {
+		if (providerMode)
+			return List.of();
 		if (items != null) {
 			List<IPatternDetails> l = new ArrayList<>();
 			for (var item : items.getStacks()) {

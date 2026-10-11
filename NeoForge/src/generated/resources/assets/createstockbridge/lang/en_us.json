@@ -1,5 +1,6 @@
 {
   "block.createstockbridge.ae_bridge": "AE Stock Bridge",
+  "block.createstockbridge.ae_provider": "AE Stock Provider",
   "createstockbridge.ponder.ae_stockbridge.header": "Connecting the Stock System to AE",
   "createstockbridge.ponder.ae_stockbridge.text_1": "AE Stock Bridge links the Create Stock system with AE",
   "createstockbridge.ponder.ae_stockbridge.text_2": "Right-Click to bind to the stock network before placing",

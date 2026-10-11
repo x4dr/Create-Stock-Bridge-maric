@@ -1,0 +1,7 @@
+# Upstream release jar, kept locally for byte-comparison. Not part of the source tree.
+original-createstockbridge-*.jar
+
+# Build output
+NeoForge/build/
+NeoForge/.gradle/
+.gradle/

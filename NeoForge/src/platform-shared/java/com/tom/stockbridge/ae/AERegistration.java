@@ -57,10 +57,28 @@ public class AERegistration {
 			.lang("AE Stock Bridge")
 			.register();
 
+	public static final BlockEntry<AEStockProviderBlock> PROVIDER_BLOCK = REGISTRATE.block("ae_provider", AEStockProviderBlock::new)
+			.initialProperties(SharedProperties::copperMetal)
+			.properties(p -> p.noOcclusion())
+			.tag(BlockTags.NEEDS_IRON_TOOL)
+			.transform(TagGen.pickaxeOnly())
+			.blockstate((ctx, prov) -> PlatformDatagen.variantBuilder(ctx, prov, st -> {
+				boolean pw = st.getValue(AEStockBridgeBlock.POWERED);
+				return prov.models()
+						.getExistingFile(prov.modLoc(pw ? "ae_provider_powered" : "ae_provider"));
+			}))
+			.item(LogisticallyLinkedBlockItem::new)
+			.transform(b -> b.model((c, p) -> {
+				p.withExistingParent("ae_provider",
+						p.modLoc("block/ae_provider"));
+			}).build())
+			.lang("AE Stock Provider")
+			.register();
+
 	public static final BlockEntityEntry<AEStockBridgeBlockEntity> BRIDGE_TILE = REGISTRATE
 			.blockEntity("ae_bridge", AEStockBridgeBlockEntity::new)
 			.renderer(() -> LinkBulbRenderer::new)
-			.validBlocks(BRIDGE_BLOCK)
+			.validBlocks(BRIDGE_BLOCK, PROVIDER_BLOCK)
 			.register();
 
 	private static final ResourceKey<Registry<AEKeyType>> AE_TYPE_REGISTRY = ResourceKey.createRegistryKey(AppEng.makeId("keytypes"));
@@ -74,7 +92,9 @@ public class AERegistration {
 		REGISTRATE.generic("ae_bridge", Registries.MENU, () -> AEStockBridgeMenu.TYPE).register();
 
 		REGISTRATE.modifyCreativeModeTab(AECreativeTabIds.MAIN, b -> b.accept(BRIDGE_BLOCK.asItem(), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
+		REGISTRATE.modifyCreativeModeTab(AECreativeTabIds.MAIN, b -> b.accept(PROVIDER_BLOCK.asItem(), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
 		REGISTRATE.modifyCreativeModeTab(AllCreativeModeTabs.BASE_CREATIVE_TAB.getKey(), b -> b.accept(BRIDGE_BLOCK.asItem(), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
+		REGISTRATE.modifyCreativeModeTab(AllCreativeModeTabs.BASE_CREATIVE_TAB.getKey(), b -> b.accept(PROVIDER_BLOCK.asItem(), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
 	}
 
 	public static void register() {
